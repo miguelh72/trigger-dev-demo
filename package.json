@@ -14,10 +14,10 @@
   "packageManager": "pnpm@10.11.1",
   "dependencies": {
     "@trigger.dev/sdk": "4.0.0-v4-beta.25",
-    "zod": "^4.0.10"
+    "zod": "4.0.10"
   },
   "devDependencies": {
     "@trigger.dev/build": "4.0.0-v4-beta.25",
-    "typescript": "^5.8.3"
+    "typescript": "5.8.3"
   }
 }
