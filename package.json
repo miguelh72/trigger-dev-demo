@@ -1,0 +1,23 @@
+{
+  "name": "trigger-dev-demo",
+  "version": "1.0.0",
+  "description": "Trigger.dev demo",
+  "keywords": ["trigger.dev", "demo"],
+  "author": "Miguel Hernandez",
+  "license": "NONE",
+  "main": "index.js",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "dev": "pnpm dlx trigger.dev@v4-beta dev",
+    "deploy": "pnpm dlx trigger.dev@v4-beta deploy"
+  },
+  "packageManager": "pnpm@10.11.1",
+  "dependencies": {
+    "@trigger.dev/sdk": "4.0.0-v4-beta.25",
+    "zod": "^4.0.10"
+  },
+  "devDependencies": {
+    "@trigger.dev/build": "4.0.0-v4-beta.25",
+    "typescript": "^5.8.3"
+  }
+}
