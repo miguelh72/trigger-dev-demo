@@ -12,7 +12,8 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "dev": "pnpm dlx trigger.dev@v4-beta dev",
-    "deploy": "pnpm dlx trigger.dev@v4-beta deploy"
+    "deploy:prod": "pnpm dlx trigger.dev@v4-beta deploy --env prod",
+    "deploy:staging": "pnpm dlx trigger.dev@v4-beta deploy --env staging"
   },
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
