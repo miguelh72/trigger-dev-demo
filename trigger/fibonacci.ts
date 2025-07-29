@@ -2,11 +2,11 @@ import { queue, schemaTask } from "@trigger.dev/sdk";
 import { z } from "zod";
 
 const fibonacciWorkflowQueue = queue({
-  name: "fibonacci-workflow-queue",
+  name: "fibonacci-workflow",
 });
 
-const fibonacciChildQueue = queue({
-  name: "fibonacci-child-queue",
+const fibonacciTaskQueue = queue({
+  name: "fibonacci-task",
 });
 
 const payloadSchema = z.object({
@@ -18,7 +18,7 @@ type Payload = z.infer<typeof payloadSchema>;
  * This is a sample workflow that demonstrates idempotency and recursive workflows
  */
 export const fibonacciTask = schemaTask({
-  id: "fibonacci-idempotent",
+  id: "fibonacci-idempotent-workflow",
   schema: payloadSchema,
   queue: fibonacciWorkflowQueue,
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
@@ -27,33 +27,40 @@ export const fibonacciTask = schemaTask({
     if (payload.n === 1) {
       return {
         result: 0,
-      }
+      };
     }
     if (payload.n === 2) {
       return {
         result: 1,
-      }
+      };
     }
 
     // else recursively trigger the task
 
-    const handleN2 = await fibonacciTask.triggerAndWait({
-      n: payload.n - 2,
-    }, {
-      idempotencyKey: `fibonacci-${payload.n - 2}`,
-      queue: fibonacciChildQueue.name,
-    });
-    const handleN1 = await fibonacciTask.triggerAndWait({
-      n: payload.n - 1,
-    }, {
-      idempotencyKey: `fibonacci-${payload.n - 1}`,
-      queue: fibonacciChildQueue.name,
-    });
+    // calling and waiting for the n-2 task to finish first since the n-1 task will trigger the n-2 task cache
+    const handleN2 = await fibonacciTask.triggerAndWait(
+      {
+        n: payload.n - 2,
+      },
+      {
+        idempotencyKey: `fibonacci-${payload.n - 2}`,
+        queue: fibonacciTaskQueue.name,
+      }
+    );
+    const handleN1 = await fibonacciTask.triggerAndWait(
+      {
+        n: payload.n - 1,
+      },
+      {
+        idempotencyKey: `fibonacci-${payload.n - 1}`,
+        queue: fibonacciTaskQueue.name,
+      }
+    );
 
     if (handleN1.ok && handleN2.ok) {
       return {
         result: handleN1.output.result + handleN2.output.result,
-      }
+      };
     }
 
     if (!handleN1.ok) {
